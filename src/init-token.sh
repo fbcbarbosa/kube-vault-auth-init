@@ -77,7 +77,13 @@ do
             LEASE_IDS="${LEASE_ID}"
         fi
     fi
-    echo "export ${ACTUAL_KEY}=\"${VALUE_OF_SECRET}\"" >> /env/variables
+
+    if [[ ${ACTUAL_KEY} =~ "^/creds/database" ]]; then
+      echo "export ${ACTUAL_KEY}_USERNAME=\"$(echo ${VALUE_OF_SECRET} | jq -r '.username')\"" >> /env/variables
+      echo "export ${ACTUAL_KEY}_PASSWORD=\"$(echo ${VALUE_OF_SECRET} | jq -r '.password')\"" >> /env/variables
+    else
+      echo "export ${ACTUAL_KEY}=\"${VALUE_OF_SECRET}\"" >> /env/variables
+    fi
 done
 
 echo "export LEASE_IDS=${LEASE_IDS}" >> /env/variables
